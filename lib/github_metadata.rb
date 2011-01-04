@@ -5,6 +5,8 @@ require 'nokogiri'
 # A simple scraper that fetches data from github repos that is not
 # available via the API. See README for an introduction and overview.
 class GithubMetadata
+  class RepoNotFound < StandardError; end;
+  
   attr_reader :user, :repo
   
   # Object representation of a github contributor
@@ -17,6 +19,21 @@ class GithubMetadata
   
   def initialize(user, repo)
     @user, @repo = user, repo
+  end
+  
+  # Similar to initialization with GithubMetadata.new, but it will immediately try
+  # to fetch the repo document and importantly will swallow GithubMetadata::RepoNotFound 
+  # errors, returning nil instead so you can easily do something like this:
+  #
+  # if metdata = GithubMetadata.fetch('rails', 'rails')
+  #   ...
+  # end
+  def self.fetch(user, repo)
+    instance = new(user, repo)
+    instance.issues
+    instance
+  rescue GithubMetadata::RepoNotFound => err
+    nil
   end
   
   # Returns an array of GithubMetadata::Contributor instances, one for each
@@ -78,6 +95,8 @@ class GithubMetadata
   
     def document
       @document ||= Nokogiri::HTML(open(contributors_url))
+    rescue OpenURI::HTTPError => err
+      raise GithubMetadata::RepoNotFound, err.to_s
     end
     
     def contributors_url

@@ -166,4 +166,21 @@ describe GithubMetadata do
     end
   end
 
+  context "initialized with an invalid repo path" do
+    before(:all) do
+      @metadata = GithubMetadata.new('colszowka', 'somefunkyrepo')
+    end
+    subject { @metadata }
+    
+    it "should raise GithubMetadata::RepoNotFound" do
+      lambda { subject.issues }.should raise_error(GithubMetadata::RepoNotFound)
+    end
+  end
+  
+  describe "fetch with invalid repo path" do
+    it "should return nil and swallow the 404" do
+      GithubMetadata.fetch('colszowka', 'anotherfunkyrepo').should be nil
+    end
+  end
+
 end
