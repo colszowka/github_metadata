@@ -1,0 +1,52 @@
+= Github Metadata
+
+The Github repository API does not include all the information available on the
+web view of a repo. It also has some trouble reporting correctly the availability of 
+a wiki and issues.
+
+The github_metadata gem is here to solve this. Currently it gives you, for any github repo:
+
+  * The availability and (if present) the count of wiki pages
+  * The availability and (if present) the count of issues
+  * The count of pull requests
+  * The list of contributors, with username and real name if available, and thereby also
+    the count of contributors
+    
+By the way: It goes very easy on the github servers in doing so, currently only performing 1 request 
+to fetch all of the information per instance.
+    
+== Usage
+
+  $ gem install github_metadata
+  $ irb
+  > require 'github_metadata'
+  > m = GithubMetadata.new('aslakhellesoy', 'cucumber')
+  > m.has_wiki?
+  => true
+  > m.wiki_pages
+  => 71
+  > m.has_issues?
+  => false
+  > m.contributor_usernames
+  => ['aslakhellesoy', ...]
+  
+Check out the full documentation to see all available methods.
+
+== TODO
+  
+  * Better (any?) error handling
+  * Merge with my very own first_github_commit gem, which retrieves the very first commit to a repo
+  
+== Note on Patches/Pull Requests
+
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+== Copyright
+
+Copyright (c) 2011 Christoph Olszowka. See LICENSE for details.

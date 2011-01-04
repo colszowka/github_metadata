@@ -1,0 +1,6 @@
+pkg/*
+tmp/*
+coverage
+rdoc
+*.gem
+.bundle
