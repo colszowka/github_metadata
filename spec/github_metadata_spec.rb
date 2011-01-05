@@ -8,83 +8,26 @@ describe GithubMetadata do
     end
     subject { @metadata }
 
-    describe '#user' do
-      specify do
-        subject.user.should == 'aslakhellesoy'
-      end
-    end
+    its(:user) { should == 'aslakhellesoy' }
+    its(:repo) { should == 'cucumber' }
+  
+    specify { should have_wiki }
+    its(:wiki_pages) { should == @raw.match(/Wiki \((\d+)\)/)[1].to_i }
     
-    describe '#repo' do
-      specify do
-        subject.repo.should == 'cucumber'
-      end
-    end
+    specify { should_not have_issues }
+    its(:issues) { should be_nil }
     
-    specify do
-      subject.should have_wiki
-    end
+    its(:pull_requests) { should == @raw.match(/Pull Requests \((\d+)\)/)[1].to_i }
     
-    describe '#wiki_pages' do
-      specify do
-        expected = @raw.match(/Wiki \((\d+)\)/)[1].to_i
-        expected.should be > 50
-        subject.wiki_pages.should == expected
-      end
-    end
+    its("contributors.length") { should == @raw.match(/(\d+) contributors/)[1].to_i}
+    its(:contributor_usernames) { should include('aslakhellesoy') }
+    its(:contributor_realnames) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'Aslak Hellesøy') }
+    its("contributor_realnames.length") { should < @metadata.contributor_usernames.length } 
     
-    specify do
-      subject.should_not have_issues
-    end
-    
-    describe '#issues' do
-      specify do
-        subject.issues.should == nil
-      end
-    end
-    
-    describe '#pull_requests' do
-      specify do
-        expected = @raw.match(/Pull Requests \((\d+)\)/)[1].to_i
-        subject.pull_requests.should == expected
-      end
-    end
-    
-    describe '#contributors' do
-      specify do
-        expected = @raw.match(/(\d+) contributors/)[1].to_i
-        subject.contributors.length.should == expected
-      end
-    end
-    
-    describe '#contributor_usernames' do
-      specify do
-        subject.contributor_usernames.should include('aslakhellesoy')
-      end
-    end
-    
-    describe '#contributor_realnames' do
-      specify do
-        subject.contributor_realnames.should include('Iain Hecker', 'Elliot Crosby-McCullough', 'Aslak Hellesøy')
-      end
+    its("contributor_names.length") { should == @metadata.contributors.count }
+    its(:contributor_names) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'Aslak Hellesøy') }
+    its(:contributor_names) { should include('marocchino') }
       
-      specify do
-        subject.contributor_realnames.length.should < subject.contributor_usernames.length
-      end
-    end
-    
-    describe '#contributor_names' do
-      specify do
-        subject.contributor_names.count.should == subject.contributors.count
-      end
-      
-      specify do
-        subject.contributor_names.should include('Iain Hecker', 'Elliot Crosby-McCullough', 'Aslak Hellesøy')
-      end
-      
-      specify do
-        subject.contributor_names.should include('marocchino')
-      end
-    end
   end
   
   context "initialized with colszowka/simplecov" do
@@ -94,76 +37,24 @@ describe GithubMetadata do
     end
     subject { @metadata }
 
-    describe '#user' do
-      specify do
-        subject.user.should == 'colszowka'
-      end
-    end
+    its(:user) { should == 'colszowka' }
+    its(:repo) { should == 'simplecov' }
     
-    describe '#repo' do
-      specify do
-        subject.repo.should == 'simplecov'
-      end
-    end
+    it { should_not have_wiki }
+    its(:wiki_pages) { should be_nil }
 
-    specify do
-      subject.should_not have_wiki
-    end
+    it { should have_issues }
+    its(:issues) { should == @raw.match(/Issues \((\d+)\)/)[1].to_i }
     
-    describe '#wiki_pages' do
-      specify do
-        subject.wiki_pages.should be nil
-      end
-    end
+    its(:pull_requests) { should == 0 }
     
-    specify do
-      subject.should have_issues
-    end
-
-    describe '#issues' do
-      specify do
-        expected = @raw.match(/Issues \((\d+)\)/)[1].to_i
-        subject.issues.should == expected
-      end
-    end
+    its("contributors.length") { should == @raw.match(/(\d+) contributors/)[1].to_i}
+    its(:contributors) { should be_all {|c| c.instance_of?(GithubMetadata::Contributor)} }
     
-    describe '#pull_requests' do
-      specify do
-        subject.pull_requests.should be 0
-      end
-    end
-    
-    describe '#contributors' do
-      specify do
-        expected = @raw.match(/(\d+) contributors/)[1].to_i
-        subject.contributors.length.should be expected
-      end
-      
-      it 'should be all instance of Contributor' do
-        subject.contributors.should be_all {|c| c.instance_of?(GithubMetadata::Contributor)}
-      end
-    end
-    
-    describe '#contributor_usernames' do
-      specify do
-        subject.contributor_usernames.should include('colszowka')
-      end
-    end
-    
-    describe '#contributor_realnames' do
-      specify do
-        subject.contributor_realnames.should include('Christoph Olszowka')
-      end
-    end
-    
-    describe '#contributor_names' do
-      specify do
-        subject.contributor_names.count.should be subject.contributors.count
-      end
-      specify do
-        subject.contributor_names.should include('Christoph Olszowka')
-      end
-    end
+    its(:contributor_usernames) { should include('colszowka') }
+    its(:contributor_realnames) { should include('Christoph Olszowka') }
+    its("contributor_names.count") { should == @metadata.contributors.count }
+    its(:contributor_names) { should include('Christoph Olszowka') }
   end
 
   context "initialized with an invalid repo path" do
@@ -179,7 +70,7 @@ describe GithubMetadata do
   
   describe "fetch with invalid repo path" do
     it "should return nil and swallow the 404" do
-      GithubMetadata.fetch('colszowka', 'anotherfunkyrepo').should be nil
+      GithubMetadata.fetch('colszowka', 'anotherfunkyrepo').should be_nil
     end
   end
 
