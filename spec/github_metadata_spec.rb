@@ -21,11 +21,11 @@ describe GithubMetadata do
     
     its("contributors.length") { should == @raw.match(/(\d+) contributors/)[1].to_i}
     its(:contributor_usernames) { should include('aslakhellesoy') }
-    its(:contributor_realnames) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'Aslak Hellesøy') }
+    its(:contributor_realnames) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'David Chelimsky') }
     its("contributor_realnames.length") { should < @metadata.contributor_usernames.length } 
     
     its("contributor_names.length") { should == @metadata.contributors.count }
-    its(:contributor_names) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'Aslak Hellesøy') }
+    its(:contributor_names) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'David Chelimsky') }
     its(:contributor_names) { should include('marocchino') }
       
   end
