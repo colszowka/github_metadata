@@ -29,7 +29,7 @@ class GithubMetadata
       @title = atom_entry.title
       @message = atom_entry.content
       @author = atom_entry.author
-      @committed_at = Time.parse(atom_entry.updated)
+      @committed_at = atom_entry.updated.kind_of?(Time) ? atom_entry.updated : Time.parse(atom_entry.updated)
       @url = atom_entry.url
     end
     
