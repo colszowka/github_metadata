@@ -40,6 +40,10 @@ Check out the full documentation to see all available methods.
   
   * Better (any?) error handling
   * Merge with my very own first_github_commit gem, which retrieves the very first commit to a repo
+
+== Compatible rubies
+
+Tested on MRI 1.8.7, 1.9.1, 1.9.2, REE and Rubinius
   
 == Note on Patches/Pull Requests
 
