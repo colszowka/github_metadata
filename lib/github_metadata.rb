@@ -92,6 +92,10 @@ class GithubMetadata
     pull_request_link.text[/\d+/].to_i
   end
   
+  def default_branch
+    document.at_css('.tabs .contextswitch code').text
+  end
+  
   private
   
     def document
