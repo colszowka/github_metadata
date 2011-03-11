@@ -28,6 +28,7 @@ describe GithubMetadata do
     its(:contributor_names) { should include('Iain Hecker', 'Elliot Crosby-McCullough', 'David Chelimsky') }
     its(:contributor_names) { should include('marocchino') }
       
+    its(:default_branch) { should == 'master' }
   end
   
   context "initialized with colszowka/simplecov" do
@@ -55,6 +56,8 @@ describe GithubMetadata do
     its(:contributor_realnames) { should include('Christoph Olszowka') }
     its("contributor_names.count") { should == @metadata.contributors.count }
     its(:contributor_names) { should include('Christoph Olszowka') }
+    
+    its(:default_branch) { should == 'master' }
   end
 
   context "initialized with an invalid repo path" do
