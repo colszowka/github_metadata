@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'open-uri'
 require 'nokogiri'
+require 'feedzirra'
 
 # A simple scraper that fetches data from github repos that is not
 # available via the API. See README for an introduction and overview.
@@ -16,6 +17,26 @@ class GithubMetadata
     def initialize(username, realname=nil)
       @username, @realname = username, realname
     end
+  end
+  
+  # Object representation of a commit, initialized
+  # from a github repo commit feed entry
+  class Commit
+    attr_reader :title, :message, :committed_at, :url, :author
+    
+    def initialize(atom_entry)
+      @atom_entry = atom_entry
+      @title = atom_entry.title
+      @message = atom_entry.content
+      @author = atom_entry.author
+      @committed_at = Time.parse(atom_entry.updated)
+      @url = atom_entry.url
+    end
+    
+    private
+      def atom_entry
+        @atom_entry
+      end
   end
   
   def initialize(user, repo)
@@ -104,8 +125,23 @@ class GithubMetadata
     pull_request_link.text[/\d+/].to_i
   end
   
+  # Returns the default branch of the repo
   def default_branch
     document.at_css('.tabs .contextswitch code').text
+  end
+  
+  # Returns (at most) the last 20 commits (fetched from atom feed of the default_branch)
+  # as instances of GithubMetadata::Commit
+  def recent_commits
+    @recent_commits ||= commits_feed.entries.map {|e| GithubMetadata::Commit.new(e) }
+  end
+  
+  # Returns the average date of recent commits (by default all (max 20), can be modified
+  # by giving the optional argument)
+  def average_recent_committed_at(num=100)
+    commit_times = recent_commits[0..num].map {|c| c.committed_at.to_f }
+    average_time = commit_times.inject(0) {|s, i| s + i} / commit_times.length
+    Time.at(average_time)
   end
   
   private
@@ -114,6 +150,10 @@ class GithubMetadata
       @document ||= Nokogiri::HTML(open(contributors_url))
     rescue OpenURI::HTTPError => err
       raise GithubMetadata::RepoNotFound, err.to_s
+    end
+    
+    def commits_feed
+      @commits_feed ||= Feedzirra::Feed.fetch_and_parse(commits_feed_url)
     end
     
     def load_contributors

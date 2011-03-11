@@ -62,6 +62,33 @@ describe GithubMetadata do
     its(:default_branch) { should == 'master' }
     
     its(:commits_feed_url) { should == 'https://github.com/colszowka/simplecov/commits/master.atom' }
+    
+    context "recent_commits" do
+      before(:all) do
+        VCR.use_cassette('simplecov') do
+          @metadata.recent_commits
+        end
+      end
+      subject { @metadata.recent_commits }
+
+      it { should have(20).items }
+      
+      context ".first" do
+        subject { @metadata.recent_commits.first }
+        
+        it { should be_a(GithubMetadata::Commit)}
+        its(:title) { should == 'Require simplecov-html ~> 0.4.3' }
+        its(:author) { should == 'Christoph Olszowka' }
+        its(:url) { should == 'https://github.com/colszowka/simplecov/commit/5ec4ca01255135234fe5b771ec3dd743a2b4ea1a' }
+        its("committed_at.utc") { should == Time.mktime(2011, 2, 25, 16, 26, 16).utc }
+      end
+    end
+    
+    it("should return last commit date for average_recent_committed_at(1)") do 
+      subject.average_recent_committed_at(1).should == Time.mktime(2011, 2, 25, 16, 25, 44).utc
+    end
+    
+    its("average_recent_committed_at.to_i") { should == Time.mktime(2011, 2, 11, 1, 49, 14).to_i }
   end
 
   context "initialized with an invalid repo path" do

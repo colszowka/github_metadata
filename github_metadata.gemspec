@@ -15,8 +15,12 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "github_metadata"
   
   s.add_dependency 'nokogiri'
+  s.add_dependency 'feedzirra'
+  s.add_dependency 'i18n'
   s.add_development_dependency 'rspec', '>= 2.0.0'
-  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'simplecov', ">= 0.4.1"
+  s.add_development_dependency 'vcr'
+  s.add_development_dependency 'webmock'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
