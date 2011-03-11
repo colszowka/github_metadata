@@ -29,6 +29,8 @@ describe GithubMetadata do
     its(:contributor_names) { should include('marocchino') }
       
     its(:default_branch) { should == 'master' }
+    
+    its(:commits_feed_url) { should == 'https://github.com/aslakhellesoy/cucumber/commits/master.atom' }
   end
   
   context "initialized with colszowka/simplecov" do
@@ -58,6 +60,8 @@ describe GithubMetadata do
     its(:contributor_names) { should include('Christoph Olszowka') }
     
     its(:default_branch) { should == 'master' }
+    
+    its(:commits_feed_url) { should == 'https://github.com/colszowka/simplecov/commits/master.atom' }
   end
 
   context "initialized with an invalid repo path" do
@@ -74,6 +78,12 @@ describe GithubMetadata do
   describe "fetch with invalid repo path" do
     it "should return nil and swallow the 404" do
       GithubMetadata.fetch('colszowka', 'anotherfunkyrepo').should be_nil
+    end
+  end
+  
+  describe "fetch with valid repo path" do
+    it "should be a GithubMetadata instance" do
+      GithubMetadata.fetch('colszowka', 'simplecov').should be_a(GithubMetadata)
     end
   end
 

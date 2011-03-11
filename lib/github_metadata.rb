@@ -37,6 +37,18 @@ class GithubMetadata
     nil
   end
   
+  def github_url
+    "https://github.com/#{user}/#{repo}/"
+  end
+  
+  def contributors_url
+    File.join(github_url, 'contributors')
+  end
+  
+  def commits_feed_url
+    File.join(github_url, "commits/#{default_branch}.atom")
+  end
+  
   # Returns an array of GithubMetadata::Contributor instances, one for each
   # contributor listed on the contributors page of github
   def contributors
@@ -102,10 +114,6 @@ class GithubMetadata
       @document ||= Nokogiri::HTML(open(contributors_url))
     rescue OpenURI::HTTPError => err
       raise GithubMetadata::RepoNotFound, err.to_s
-    end
-    
-    def contributors_url
-      "https://github.com/#{user}/#{repo}/contributors"
     end
     
     def load_contributors
