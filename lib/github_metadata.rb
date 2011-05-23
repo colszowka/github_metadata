@@ -134,6 +134,10 @@ class GithubMetadata
   # as instances of GithubMetadata::Commit
   def recent_commits
     @recent_commits ||= commits_feed.entries.map {|e| GithubMetadata::Commit.new(e) }
+    
+  # TODO: Write tests for this error handling. See commits_feed method - this will result in NoMethodError 'entries' on nil
+  rescue NoMethodError => err
+    nil
   end
   
   # Returns the average date of recent commits (by default all (max 20), can be modified
@@ -154,6 +158,7 @@ class GithubMetadata
     
     def commits_feed
       return @commits_feed if @commits_feed
+      # TODO: Write a test for this check. It is required since feedzirra returns raw http status code fixnums on failure...
       response = Feedzirra::Feed.fetch_and_parse(commits_feed_url)
       if response.kind_of?(Fixnum)
         return nil
