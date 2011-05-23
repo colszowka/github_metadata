@@ -47,7 +47,7 @@ class GithubMetadata
   # to fetch the repo document and importantly will swallow GithubMetadata::RepoNotFound 
   # errors, returning nil instead so you can easily do something like this:
   #
-  # if metdata = GithubMetadata.fetch('rails', 'rails')
+  # if metadata = GithubMetadata.fetch('rails', 'rails')
   #   ...
   # end
   def self.fetch(user, repo)
