@@ -155,7 +155,7 @@ class GithubMetadata
     def commits_feed
       return @commits_feed if @commits_feed
       response = Feedzirra::Feed.fetch_and_parse(commits_feed_url)
-      if result.kind_of?(Fixnum)
+      if response.kind_of?(Fixnum)
         return nil
       else
         @commits_feed = response
