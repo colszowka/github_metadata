@@ -139,9 +139,9 @@ class GithubMetadata
   # Returns the average date of recent commits (by default all (max 20), can be modified
   # by giving the optional argument)
   def average_recent_committed_at(num=100)
-    commit_times = recent_commits[0..num].map {|c| c.committed_at.to_f }
+    commit_times = recent_commits[0...num].map {|c| c.committed_at.to_f }
     average_time = commit_times.inject(0) {|s, i| s + i} / commit_times.length
-    Time.at(average_time)
+    Time.at(average_time).utc
   end
   
   private
