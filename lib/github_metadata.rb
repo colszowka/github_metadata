@@ -153,7 +153,13 @@ class GithubMetadata
     end
     
     def commits_feed
-      @commits_feed ||= Feedzirra::Feed.fetch_and_parse(commits_feed_url)
+      return @commits_feed if @commits_feed
+      response = Feedzirra::Feed.fetch_and_parse(commits_feed_url)
+      if result.kind_of?(Fixnum)
+        return nil
+      else
+        @commits_feed = response
+      end
     end
     
     def load_contributors

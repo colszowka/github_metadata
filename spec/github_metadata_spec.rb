@@ -94,6 +94,20 @@ describe GithubMetadata do
       should == expected_date.to_i
     end
   end
+  
+  context "initialized with jquery/jquery" do
+    before(:all) do
+      @metadata = GithubMetadata.new('jquery', 'jquery')
+      @raw = open("https://github.com/#{@metadata.user}/#{@metadata.repo}/contributors").read
+    end
+    subject { @metadata }
+
+    specify { should_not have_wiki }
+    its(:wiki_pages) { should be_nil }
+    
+    specify { should_not have_issues }
+    its(:issues) { should be_nil }
+  end
 
   context "initialized with an invalid repo path" do
     before(:all) do
@@ -101,8 +115,16 @@ describe GithubMetadata do
     end
     subject { @metadata }
     
-    it "should raise GithubMetadata::RepoNotFound" do
+    it "should raise GithubMetadata::RepoNotFound when accessing .issues" do
       lambda { subject.issues }.should raise_error(GithubMetadata::RepoNotFound)
+    end
+    
+    it "should raise GithubMetadata::RepoNotFound when accessing .recent_commits" do
+      lambda { subject.recent_commits }.should raise_error(GithubMetadata::RepoNotFound)
+    end
+    
+    it "should raise GithubMetadata::RepoNotFound when accessing .average_recent_committed_at" do
+      lambda { subject.average_recent_committed_at }.should raise_error(GithubMetadata::RepoNotFound)
     end
   end
   
