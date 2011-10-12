@@ -144,6 +144,7 @@ class GithubMetadata
   # by giving the optional argument)
   def average_recent_committed_at(num=100)
     commit_times = recent_commits[0...num].map {|c| c.committed_at.to_f }
+    return nil if commit_times.empty?
     average_time = commit_times.inject(0) {|s, i| s + i} / commit_times.length
     Time.at(average_time).utc
   end
@@ -158,12 +159,13 @@ class GithubMetadata
     
     def commits_feed
       return @commits_feed if @commits_feed
-      # TODO: Write a test for this check. It is required since feedzirra returns raw http status code fixnums on failure...
-      response = Feedzirra::Feed.fetch_and_parse(commits_feed_url)
-      if response.kind_of?(Fixnum)
-        return nil
+      
+      http_response = open(commits_feed_url)
+      if http_response.status[0].to_i == 200
+        # sub \n is required since github decided to make their atom feed invalid by adding a blank line before the xml instruct
+        @commits_feed = Feedzirra::Feed.parse(http_response.read.sub("\n", ''))
       else
-        @commits_feed = response
+        nil
       end
     end
     
