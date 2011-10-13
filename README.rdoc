@@ -6,15 +6,15 @@ a wiki and issues.
 
 The github_metadata gem is here to solve this. Currently it gives you, for any github repo:
 
-  * The availability and (if present) the count of wiki pages
-  * The availability and (if present) the count of issues
-  * The count of pull requests
-  * The list of contributors, with username and real name if available, and thereby also
-    the count of contributors
-  * The default branch
-  * The most recent commits
-  * The average date for recent commits (to analyze project activity - hat tip to Ryan Bates for the
-    idea!)
+* The availability and (if present) the count of wiki pages
+* The availability and (if present) the count of issues
+* The count of pull requests
+* The list of contributors, with username and real name if available, and thereby also
+  the count of contributors
+* The default branch
+* The most recent commits
+* The average date for recent commits (to analyze project activity - hat tip to Ryan Bates for the
+  idea!)
     
 By the way: It goes very easy on the github servers in doing so, currently only performing 1 request 
 to fetch all of the information per instance.
