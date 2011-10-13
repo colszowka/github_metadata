@@ -66,6 +66,10 @@ class GithubMetadata
     File.join(github_url, 'contributors')
   end
   
+  def branches_url
+    File.join(github_url, 'branches')
+  end
+  
   def commits_feed_url
     File.join(github_url, "commits/#{default_branch}.atom")
   end
@@ -101,7 +105,7 @@ class GithubMetadata
   
   # Returns the amount of wiki pages or nil when no wiki is present
   def wiki_pages
-    wiki_link = document.at_css('a[highlight="repo_wiki"]')
+    wiki_link = document.at_css('a[highlight="repo_wiki"] .counter')
     return nil unless wiki_link
     wiki_link.text[/\d+/].to_i
   end
@@ -113,21 +117,23 @@ class GithubMetadata
   
   # Returns issue count or nil if issues are disabled
   def issues
-    issue_link = document.at_css('a[highlight="issues"]')
+    issue_link = document.at_css('a[highlight="issues"] .counter')
     return nil unless issue_link
     issue_link.text[/\d+/].to_i
   end
   
   # Returns amount of pull requests
   def pull_requests
-    pull_request_link = document.at_css('a[highlight="repo_pulls"]')
+    pull_request_link = document.at_css('a[highlight="repo_pulls"] .counter')
     return nil unless pull_request_link
     pull_request_link.text[/\d+/].to_i
   end
   
   # Returns the default branch of the repo
   def default_branch
-    document.at_css('.tabs .contextswitch code').text
+    @default_branch ||= Nokogiri::HTML(open(branches_url)).at_css('tr.base td.name h3').text.strip.chomp
+  rescue OpenURI::HTTPError => err
+    raise GithubMetadata::RepoNotFound, err.to_s
   end
   
   # Returns (at most) the last 20 commits (fetched from atom feed of the default_branch)

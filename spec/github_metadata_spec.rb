@@ -12,14 +12,14 @@ describe GithubMetadata do
     its(:repo) { should == 'cucumber' }
   
     specify { should have_wiki }
-    its(:wiki_pages) { should == @raw.match(/Wiki \((\d+)\)/)[1].to_i }
+    its(:wiki_pages) { should == @raw.match(/Wiki[^\d]+(\d+)/)[1].to_i}
     
     # specify { should_not have_issues }
     # its(:issues) { should be_nil }
     it { should have_issues }
-    its(:issues) { should == @raw.match(/Issues \((\d+)\)/)[1].to_i }
+    its(:issues) { should == @raw.match(/Issues[^\d]+(\d+)/)[1].to_i }
     
-    its(:pull_requests) { should == @raw.match(/Pull Requests \((\d+)\)/)[1].to_i }
+    its(:pull_requests) { should == @raw.match(/Pull Requests[^\d]+(\d+)/)[1].to_i }
     
     its("contributors.length") { should == @raw.match(/(\d+) contributors/)[1].to_i}
     its(:contributor_usernames) { should include('aslakhellesoy') }
@@ -50,9 +50,9 @@ describe GithubMetadata do
     its(:wiki_pages) { should be_nil }
 
     it { should have_issues }
-    its(:issues) { should == @raw.match(/Issues \((\d+)\)/)[1].to_i }
+    its(:issues) { should == @raw.match(/Issues[^\d]+(\d+)/)[1].to_i }
     
-    its(:pull_requests) { should == @raw.match(/Pull Requests \((\d+)\)/)[1].to_i }
+    its(:pull_requests) { should == @raw.match(/Pull Requests[^\d]+(\d+)/)[1].to_i }
     
     its("contributors.length") { should == @raw.match(/(\d+) contributors/)[1].to_i}
     its(:contributors) { should be_all {|c| c.instance_of?(GithubMetadata::Contributor)} }
